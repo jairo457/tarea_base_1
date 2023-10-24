@@ -59,7 +59,13 @@ class _TaskScreenState extends State<TaskScreen> {
       value: isChecked1,
       onChanged: (bool? value) {
         setState(() {
-          filter = 'C';
+          if (value!) {
+            filter = 'C';
+          } else {
+            filter = '';
+          }
+          isChecked2 = false;
+          isChecked3 = false;
           isChecked1 = value!;
         });
       },
@@ -68,11 +74,17 @@ class _TaskScreenState extends State<TaskScreen> {
       title: const Text('En proceso'),
       checkColor: Colors.white,
       fillColor: MaterialStateProperty.resolveWith(getColor),
-      value: isChecked1,
+      value: isChecked2,
       onChanged: (bool? value) {
         setState(() {
-          filter = 'E';
-          isChecked1 = value!;
+          if (value!) {
+            filter = 'E';
+          } else {
+            filter = '';
+          }
+          isChecked1 = false;
+          isChecked3 = false;
+          isChecked2 = value!;
         });
       },
     );
@@ -80,11 +92,17 @@ class _TaskScreenState extends State<TaskScreen> {
       title: const Text('Pendientes'),
       checkColor: Colors.white,
       fillColor: MaterialStateProperty.resolveWith(getColor),
-      value: isChecked1,
+      value: isChecked3,
       onChanged: (bool? value) {
         setState(() {
-          filter = 'P';
-          isChecked1 = value!;
+          if (value!) {
+            filter = 'P';
+          } else {
+            filter = '';
+          }
+          isChecked2 = false;
+          isChecked1 = false;
+          isChecked3 = value!;
         });
       },
     );
@@ -106,7 +124,7 @@ class _TaskScreenState extends State<TaskScreen> {
         child: Column(children: [
           checkPendiente,
           checkProceso,
-          checkProceso,
+          checkComplete,
           search,
           ValueListenableBuilder(
               valueListenable: GlobalValues.flagTask,
@@ -122,20 +140,32 @@ class _TaskScreenState extends State<TaskScreen> {
                             shrinkWrap: true,
                             itemCount: snapshot.data!.length,
                             itemBuilder: (BuildContext context, int index) {
-                              if (snapshot.data![index].NameTask!
-                                  .contains(searchString)) {
-                                return CardTaskWidget(
-                                  taskModel: snapshot.data![index],
-                                  masterDB: masterDB,
-                                );
-                              } else if (snapshot.data![index].DscTask!
-                                  .contains(searchString)) {
-                                return CardTaskWidget(
-                                  taskModel: snapshot.data![index],
-                                  masterDB: masterDB,
-                                );
+                              if (filter.isEmpty ?? true) {
+                                if (snapshot.data![index].NameTask!
+                                    .contains(searchString)) {
+                                  return CardTaskWidget(
+                                    taskModel: snapshot.data![index],
+                                    masterDB: masterDB,
+                                  );
+                                } else if (snapshot.data![index].DscTask!
+                                    .contains(searchString)) {
+                                  return CardTaskWidget(
+                                    taskModel: snapshot.data![index],
+                                    masterDB: masterDB,
+                                  );
+                                } else {
+                                  return Container();
+                                }
                               } else {
-                                return Container();
+                                if (snapshot.data![index].SttTask!
+                                    .contains(filter)) {
+                                  return CardTaskWidget(
+                                    taskModel: snapshot.data![index],
+                                    masterDB: masterDB,
+                                  );
+                                } else {
+                                  return Container();
+                                }
                               }
                             });
                       } else {

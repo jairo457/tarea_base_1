@@ -22,7 +22,11 @@ class CardTaskWidget extends StatelessWidget {
       child: Row(
         children: [
           Column(
-            children: [Text(taskModel.NameTask!), Text(taskModel.DscTask!)],
+            children: [
+              Text(taskModel.NameTask!),
+              Text(taskModel.DscTask!),
+              Text(taskModel.SttTask!)
+            ],
           ),
           Expanded(child: Container()), //Se expande lo mas que puede
           Column(
