@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:tarea_base_1/assets/GlobalValues.dart';
 import 'package:tarea_base_1/database/Masterdb.dart';
-import 'package:tarea_base_1/models/CareerModel.dart';
 import 'package:tarea_base_1/models/ProfesorModel.dart';
 import 'package:tarea_base_1/models/TaskModel.dart';
+import '../services/notifi_service.dart';
+import 'package:timezone/data/latest.dart' as tz;
+
+DateTime fecha = DateTime.now();
 
 class AddTask extends StatefulWidget {
   AddTask({super.key, this.taskModel});
@@ -23,7 +27,7 @@ class _AddTaskState extends State<AddTask> {
   List lit = [];
   ValueNotifier<bool> band = ValueNotifier<bool>(false);
   bool band2 = false;
-  DateTime fecha = DateTime.utc(2000, 10, 5);
+
   TextEditingController TxtTaskName = TextEditingController();
   TextEditingController TxtDscTask = TextEditingController();
   TextEditingController TxtSttTask = TextEditingController();
@@ -36,6 +40,9 @@ class _AddTaskState extends State<AddTask> {
   @override
   void initState() {
     super.initState();
+    WidgetsFlutterBinding.ensureInitialized();
+    NotificationService().initNotification();
+    tz.initializeTimeZones();
     masterDB = MasterDB();
     listar();
     if (widget.taskModel != null) {
@@ -115,8 +122,17 @@ class _AddTaskState extends State<AddTask> {
 
     final ElevatedButton btnGuardar = ElevatedButton(
         onPressed: () {
-          //print(fecha.toString());
-          if (widget.taskModel == null) {
+          print(fecha.toString());
+          debugPrint('Notification Scheduled for $fecha');
+          NotificationService().scheduleNotification(
+              title: 'hola',
+              body: 'hola',
+              scheduledNotificationDateTime: fecha);
+          /*if (widget.taskModel == null) {
+            NotificationService().scheduleNotification(
+                title: TxtTaskName.text.substring(0, 3),
+                body: TxtDscTask.text.substring(0, 3),
+                scheduledNotificationDateTime: fecha);
             //verifica si es insercicion si no actualiza
             masterDB!.INSERT_Task('tblTareas', {
               //El simbolo ! proteje contra  valores nulos
@@ -135,6 +151,10 @@ class _AddTaskState extends State<AddTask> {
               Navigator.pop(context);
             });
           } else {
+            NotificationService().scheduleNotification(
+                title: TxtTaskName.text.substring(0, 3),
+                body: TxtDscTask.text.substring(0, 3),
+                scheduledNotificationDateTime: fecha);
             masterDB!.UPDATE_Task('tblTareas', {
               'IdTask': widget.taskModel!.IdTask,
               'NameTask': TxtTaskName.text,
@@ -151,16 +171,15 @@ class _AddTaskState extends State<AddTask> {
               ScaffoldMessenger.of(context).showSnackBar(snackbar);
               Navigator.pop(context);
             });
-          }
+          }*/
         },
         child: Text('Save Task'));
 
 //-------------------------------------------------------------------
     final TextButton datepic = TextButton(
         onPressed: () {
-          DatePicker.showDatePicker(context,
-              showTitleActions: true,
-              minTime: DateTime(2023, 6, 7), onChanged: (date) {
+          DatePicker.showDateTimePicker(context, showTitleActions: true,
+              onChanged: (date) {
             fecha = date;
             // print('change $date');
           }, onConfirm: (date) {

@@ -25,7 +25,8 @@ class CardTaskWidget extends StatelessWidget {
             children: [
               Text(taskModel.NameTask!),
               Text(taskModel.DscTask!),
-              Text(taskModel.SttTask!)
+              Text(taskModel.FECRECORDATORIO!.toString())
+              //Text(taskModel.SttTask!)
             ],
           ),
           Expanded(child: Container()), //Se expande lo mas que puede

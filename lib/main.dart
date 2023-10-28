@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:tarea_base_1/routes.dart';
 import 'package:tarea_base_1/screens/LoginScreen.dart';
+import 'package:tarea_base_1/services/notifi_service.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  NotificationService().initNotification();
+  tz.initializeTimeZones();
   runApp(MainApp());
 }
 
@@ -29,7 +34,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: LoginScreen(),
+      home: const LoginScreen(),
       routes: GetRoutes(),
     );
   }
