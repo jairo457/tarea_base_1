@@ -19,8 +19,6 @@ class _AddProfesorState extends State<AddProfesor> {
   List lit = [];
   TextEditingController TxtProfesorName = TextEditingController();
   TextEditingController TxtSubjectName = TextEditingController();
-  TextEditingController TxtUser = TextEditingController();
-  TextEditingController TxtContra = TextEditingController();
   TextEditingController TxtCareer = TextEditingController();
   List<CareerModel> list_cn = [];
   //Sacamos variables por que
@@ -35,20 +33,12 @@ class _AddProfesorState extends State<AddProfesor> {
     if (widget.profesorModel != null) {
       TxtProfesorName.text = widget.profesorModel!.NameProfesor!;
       TxtSubjectName.text = widget.profesorModel!.NameSubject!;
-      TxtUser.text = widget.profesorModel!.User!;
-      TxtContra.text = widget.profesorModel!.Contra!;
       band = 1;
-      //haz magia viejo
     }
-    //dropDownValue = list_cn.first;
   }
 
   listar() async {
     list_cn = await masterDB!.GETALL_Career();
-    /*items = list_cn
-        .map((item) => DropdownMenuItem(
-            value: item, child: Text(item.NameCareer.toString())))
-        .toList();*/
     if (widget.profesorModel != null) {
       for (CareerModel carre in list_cn) {
         if (widget.profesorModel!.IdCareer == carre.IdCareer) {
@@ -72,15 +62,6 @@ class _AddProfesorState extends State<AddProfesor> {
           label: Text('Materia'), border: OutlineInputBorder()),
       controller: TxtSubjectName,
     );
-    final txtUser = TextFormField(
-        decoration: const InputDecoration(
-            label: Text('Usuario'), border: OutlineInputBorder()),
-        controller: TxtUser);
-    final txtContra = TextFormField(
-      decoration: const InputDecoration(
-          label: Text('Contraseña'), border: OutlineInputBorder()),
-      controller: TxtContra,
-    );
 
     DropdownButton dbCareer = DropdownButton(
         value: dropDownValue,
@@ -101,23 +82,31 @@ class _AddProfesorState extends State<AddProfesor> {
         onPressed: () {
           if (widget.profesorModel == null) {
             if (dropDownValue!.IdCareer != null) {
-              //verifica si es insercicion si no actualiza
-              masterDB!.INSERT_Profesor('tblProfesor', {
-                //El simbolo ! proteje contra  valores nulos
-                'NameProfesor': TxtProfesorName.text,
-                'NameSubject': TxtSubjectName.text,
-                'User': TxtUser.text,
-                'Contra': TxtContra.text,
-                'IdCareer': dropDownValue!.IdCareer,
-              }).then((value) {
-                //Entero que regresamos de la llamada a insertar
-                var msj = (value > 0)
-                    ? 'La insercion fue exitosa!'
-                    : 'Ocurrio un error';
-                var snackbar = SnackBar(content: Text(msj));
-                ScaffoldMessenger.of(context).showSnackBar(snackbar); //aviso
-                Navigator.pop(context);
-              });
+              if (TxtProfesorName.text == '' || TxtSubjectName.text == '') {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return const AlertDialog(
+                        content: Text('Ingrese datos validos'),
+                      );
+                    });
+              } else {
+                //verifica si es insercicion si no actualiza
+                masterDB!.INSERT_Profesor('tblProfesor', {
+                  //El simbolo ! proteje contra  valores nulos
+                  'NameProfesor': TxtProfesorName.text,
+                  'NameSubject': TxtSubjectName.text,
+                  'IdCareer': dropDownValue!.IdCareer,
+                }).then((value) {
+                  //Entero que regresamos de la llamada a insertar
+                  var msj = (value > 0)
+                      ? 'La insercion fue exitosa!'
+                      : 'Ocurrio un error';
+                  var snackbar = SnackBar(content: Text(msj));
+                  ScaffoldMessenger.of(context).showSnackBar(snackbar); //aviso
+                  Navigator.pop(context);
+                });
+              }
             } else {
               showDialog(
                 context: context,
@@ -133,8 +122,6 @@ class _AddProfesorState extends State<AddProfesor> {
               'IdProfesor': widget.profesorModel!.IdProfesor,
               'NameProfesor': TxtProfesorName.text,
               'NameSubject': TxtSubjectName.text,
-              'User': TxtUser.text,
-              'Contra': TxtContra.text,
               'IdCareer': dropDownValue!.IdCareer,
             }).then((value) {
               GlobalValues.flagProfesor.value =
@@ -166,10 +153,6 @@ class _AddProfesorState extends State<AddProfesor> {
               txtProfesorName,
               space,
               txtSubjectName,
-              space,
-              txtUser,
-              space,
-              txtContra,
               space,
               DropdownButtonHideUnderline(
                 child: FutureBuilder<List<CareerModel>>(

@@ -1,7 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:tarea_base_1/database/Masterdb.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreen();
+}
+
+class _HomeScreen extends State<HomeScreen> {
+  MasterDB? masterDB;
+
+  @override
+  void initState() {
+    super.initState();
+    masterDB = MasterDB();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -9,25 +23,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Bienvenido'),
       ),
-      drawer: CreateDrawer(context),
       body: CreateBody(context),
-    );
-  }
-
-  Widget CreateDrawer(context) {
-    return Drawer(
-      child: ListView(
-        children: [
-          ListTile(
-            //leading: Image.network('https://cdn3.iconfinder.com/data/icons/street-food-and-food-trucker-1/64/fruit-organic-plant-orange-vitamin-64.png'),
-            leading: Image.asset('assets/naranja.png'),
-            trailing: Icon(Icons.chevron_right),
-            title: Text('FruitApp'),
-            subtitle: Text('Carrusel'),
-            onTap: () {},
-          ),
-        ],
-      ),
     );
   }
 
@@ -37,14 +33,36 @@ class HomeScreen extends StatelessWidget {
         Column(
           children: [
             OutlinedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/Task');
+              onPressed: () async {
+                int cant = await masterDB!.GETALL_Profesor_can();
+                if (cant == 0) {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return const AlertDialog(
+                          content: Text('Se necesita al menos un profesor'),
+                        );
+                      });
+                } else {
+                  Navigator.pushNamed(context, '/Task');
+                }
               },
               child: Text('Tarea'),
             ),
             OutlinedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/Profesor');
+                onPressed: () async {
+                  int cant = await masterDB!.GETALL_Career_can();
+                  if (cant == 0) {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return const AlertDialog(
+                            content: Text('Se necesita al menos una carrera'),
+                          );
+                        });
+                  } else {
+                    Navigator.pushNamed(context, '/Profesor');
+                  }
                 },
                 child: Text('Profesor')),
             OutlinedButton(

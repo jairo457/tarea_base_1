@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tarea_base_1/assets/GlobalValues.dart';
 import 'package:tarea_base_1/database/Masterdb.dart';
+import 'package:tarea_base_1/models/ProfesorModel.dart';
 import 'package:tarea_base_1/models/TaskModel.dart';
 import 'package:tarea_base_1/screens/AddTask.dart';
 
@@ -12,6 +13,18 @@ class CardTaskWidget extends StatelessWidget {
 
   TaskModel taskModel;
   MasterDB? masterDB;
+  List<ProfesorModel> list_cn = [];
+
+  profesorname(int id) async {
+    ProfesorModel profe;
+    list_cn = await masterDB!.GET_Profesor(id);
+    profe = list_cn.first;
+    return profe.NameProfesor.toString();
+    /*items = list_cn
+        .map((item) => DropdownMenuItem(
+            value: item, child: Text(item.NameCareer.toString())))
+        .toList();*/
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +38,7 @@ class CardTaskWidget extends StatelessWidget {
             children: [
               Text(taskModel.NameTask!),
               Text(taskModel.DscTask!),
-              Text(taskModel.FECRECORDATORIO!.toString())
+              //Text(profesorname(taskModel.IdProfesor!.toInt()))
               //Text(taskModel.SttTask!)
             ],
           ),

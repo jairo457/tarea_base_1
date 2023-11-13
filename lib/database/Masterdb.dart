@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:sqflite/utils/utils.dart';
 import 'package:tarea_base_1/models/CareerModel.dart';
 import 'package:tarea_base_1/models/ProfesorModel.dart';
 import 'package:tarea_base_1/models/TaskModel.dart';
@@ -33,8 +34,6 @@ class MasterDB {
         IdProfesor INTEGER PRIMARY KEY,
         NameProfesor VARCHAR(100),
         NameSubject VARCHAR(100),
-        User VARCHAR(100),
-        Contra VARCHAR(10),
         IdCareer INTEGER,
         FOREIGN KEY (IdCareer) REFERENCES tblCarrera (IdCareer) 
     );''';
@@ -47,19 +46,9 @@ class MasterDB {
         IdProfesor INTEGER,
         FOREIGN KEY (IdProfesor) REFERENCES tblProfesor (IdProfesor)
     );''';
-    String query4 = '''CREATE TABLE tblReminder (
-        IdReminder INTEGER PRIMARY KEY,
-        NameReminder VARCHAR(50),
-        DayReminder INTEGER,
-        MonthReminder INTEGER,
-        YearReminder INTEGER,
-        HourReminder INTEGER,
-        MinuteReminder INTEGER
-    );''';
     db.execute(query1);
     db.execute(query2);
     db.execute(query3);
-    db.execute(query4);
   }
 
 //Career---------------------------------------
@@ -86,6 +75,15 @@ class MasterDB {
     return result
         .map((task) => CareerModel.fromMap(task))
         .toList(); //muevete en cada elemento y genera la lista
+  }
+
+  Future<int> GETALL_Career_can() async {
+    var conexion = await database;
+    var result = await conexion!.query('tblCarrera');
+    result
+        .map((task) => CareerModel.fromMap(task))
+        .toList(); //muevete en cada elemento y genera la lista
+    return result.length;
   }
 
   Future<List<dynamic>> GETALL_Career_list() async {
@@ -121,6 +119,15 @@ class MasterDB {
         .toList(); //muevete en cada elemento y genera la lista
   }
 
+  Future<int> GETALL_Profesor_can() async {
+    var conexion = await database;
+    var result = await conexion!.query('tblProfesor');
+    result
+        .map((task) => ProfesorModel.fromMap(task))
+        .toList(); //muevete en cada elemento y genera la lista
+    return result.length;
+  }
+
   Future<int> GETCAREER_PROFESOR(int Carer) async {
     var conexion = await database;
     var result = await conexion!
@@ -129,6 +136,15 @@ class MasterDB {
         .map((task) => ProfesorModel.fromMap(task))
         .toList(); //muevete en cada elemento y genera la lista
     return result.length;
+  }
+
+  Future<List<ProfesorModel>> GET_Profesor(int id) async {
+    var conexion = await database;
+    var result = await conexion!
+        .rawQuery('SELECT * FROM tblProfesor WHERE IdProfesor = ?', [id]);
+    return result
+        .map((task) => ProfesorModel.fromMap(task))
+        .toList(); //muevete en cada elemento y genera la lista
   }
 
 //Task------------------------------------------
@@ -164,30 +180,5 @@ class MasterDB {
         .map((task) => TaskModel.fromMap(task))
         .toList(); //muevete en cada elemento y genera la lista
     return result.length;
-  }
-
-//Reminder-----------------------------------------------
-  Future<int> INSERT_Reminder(String tblName, Map<String, dynamic> data) async {
-    var conexion = await database;
-    return conexion!.insert(tblName, data);
-  }
-
-  Future<int> UPDATE_Reminder(String tblName, Map<String, dynamic> data) async {
-    var conexion = await database;
-    return conexion!.update(tblName, data,
-        where: 'idTask = ?', whereArgs: [data['idTask']]);
-  }
-
-  Future<int> DELETE_Reminder(String tblName, int idTask) async {
-    var conexion = await database;
-    return conexion!.delete(tblName, where: 'idTask = ?', whereArgs: [idTask]);
-  }
-
-  Future<List<CareerModel>> GETALL_Reminder() async {
-    var conexion = await database;
-    var result = await conexion!.query('tblTareas');
-    return result
-        .map((task) => CareerModel.fromMap(task))
-        .toList(); //muevete en cada elemento y genera la lista
   }
 }

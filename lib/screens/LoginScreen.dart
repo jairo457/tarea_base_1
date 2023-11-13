@@ -36,28 +36,6 @@ class _LoginScreenState extends State<LoginScreen> {
         String us = TxtConUser.text;
         String con = TxtConPass.text;
         Navigator.pushNamed(context, '/home');
-        /* us == usuario
-            ? con == contrasena
-                ? (
-                    Navigator.pushNamed(context, '/dash'),
-                    //isChecked ? _savePreferences() : doNothing()
-                  )
-                : showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        content: Text('Contraseña incorrecta'),
-                      );
-                    },
-                  )
-            : showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    content: Text('Usuario incorrecto'),
-                  );
-                },
-              );*/
       },
     );
 

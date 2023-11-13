@@ -25,7 +25,6 @@ class CardProfesorWidget extends StatelessWidget {
             children: [
               Text(profesorModel.NameProfesor!),
               Text(profesorModel.NameSubject!),
-              Text(profesorModel.User!),
               Text(profesorModel.IdCareer!.toString())
             ],
           ),

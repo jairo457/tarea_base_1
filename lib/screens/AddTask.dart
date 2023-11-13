@@ -40,9 +40,6 @@ class _AddTaskState extends State<AddTask> {
   @override
   void initState() {
     super.initState();
-    WidgetsFlutterBinding.ensureInitialized();
-    NotificationService().initNotification();
-    tz.initializeTimeZones();
     masterDB = MasterDB();
     listar();
     if (widget.taskModel != null) {
@@ -66,10 +63,6 @@ class _AddTaskState extends State<AddTask> {
 
   listar() async {
     list_cn = await masterDB!.GETALL_Profesor();
-    /*items = list_cn
-        .map((item) => DropdownMenuItem(
-            value: item, child: Text(item.NameCareer.toString())))
-        .toList();*/
     if (widget.taskModel != null) {
       for (ProfesorModel profe in list_cn) {
         if (widget.taskModel!.IdProfesor == profe.IdProfesor) {
@@ -122,38 +115,50 @@ class _AddTaskState extends State<AddTask> {
 
     final ElevatedButton btnGuardar = ElevatedButton(
         onPressed: () {
-          print(fecha.toString());
-          debugPrint('Notification Scheduled for $fecha');
-          NotificationService().scheduleNotification(
-              title: 'hola',
-              body: 'hola',
-              scheduledNotificationDateTime: fecha);
-          /*if (widget.taskModel == null) {
-            NotificationService().scheduleNotification(
-                title: TxtTaskName.text.substring(0, 3),
-                body: TxtDscTask.text.substring(0, 3),
-                scheduledNotificationDateTime: fecha);
-            //verifica si es insercicion si no actualiza
-            masterDB!.INSERT_Task('tblTareas', {
-              //El simbolo ! proteje contra  valores nulos
-              'NameTask': TxtTaskName.text,
-              'DscTask': TxtDscTask.text,
-              'SttTask': dropDownValue!.substring(0, 1),
-              'IdProfesor': dropDownValue2!.IdProfesor,
-              'FECRECORDATORIO': fecha.toString()
-            }).then((value) {
-              //Entero que regresamos de la llamada a insertar
-              var msj = (value > 0)
-                  ? 'La insercion fue exitosa!'
-                  : 'Ocurrio un error';
-              var snackbar = SnackBar(content: Text(msj));
-              ScaffoldMessenger.of(context).showSnackBar(snackbar); //aviso
-              Navigator.pop(context);
-            });
+          if (widget.taskModel == null) {
+            if (TxtTaskName.text == '' || TxtDscTask.text == '') {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return const AlertDialog(
+                      content: Text('Ingrese datos validos'),
+                    );
+                  });
+            } else {
+              NotificationService().scheduleNotification(
+                  title: TxtTaskName.text.length > 20
+                      ? TxtTaskName.text.substring(0, 20)
+                      : TxtTaskName.text,
+                  body: TxtDscTask.text.length > 20
+                      ? TxtDscTask.text.substring(0, 20)
+                      : TxtDscTask.text,
+                  scheduledNotificationDateTime: fecha);
+              //verifica si es insercicion si no actualiza
+              masterDB!.INSERT_Task('tblTareas', {
+                //El simbolo ! proteje contra  valores nulos
+                'NameTask': TxtTaskName.text,
+                'DscTask': TxtDscTask.text,
+                'SttTask': dropDownValue!.substring(0, 1),
+                'IdProfesor': dropDownValue2!.IdProfesor,
+                'FECRECORDATORIO': fecha.toString()
+              }).then((value) {
+                //Entero que regresamos de la llamada a insertar
+                var msj = (value > 0)
+                    ? 'La insercion fue exitosa!'
+                    : 'Ocurrio un error';
+                var snackbar = SnackBar(content: Text(msj));
+                ScaffoldMessenger.of(context).showSnackBar(snackbar); //aviso
+                Navigator.pop(context);
+              });
+            }
           } else {
             NotificationService().scheduleNotification(
-                title: TxtTaskName.text.substring(0, 3),
-                body: TxtDscTask.text.substring(0, 3),
+                title: TxtTaskName.text.length > 20
+                    ? TxtTaskName.text.substring(0, 20)
+                    : TxtTaskName.text,
+                body: TxtDscTask.text.length > 20
+                    ? TxtDscTask.text.substring(0, 20)
+                    : TxtDscTask.text,
                 scheduledNotificationDateTime: fecha);
             masterDB!.UPDATE_Task('tblTareas', {
               'IdTask': widget.taskModel!.IdTask,
@@ -171,7 +176,7 @@ class _AddTaskState extends State<AddTask> {
               ScaffoldMessenger.of(context).showSnackBar(snackbar);
               Navigator.pop(context);
             });
-          }*/
+          }
         },
         child: Text('Save Task'));
 
@@ -246,17 +251,12 @@ class _AddTaskState extends State<AddTask> {
               datepic,
               ValueListenableBuilder<bool>(
                 builder: (BuildContext context, bool value, Widget? child) {
-                  // This builder will only get called when the _counter
-                  // is updated.
                   return Text(
                     formattedDate = DateFormat('yyyy-MM-dd').format(fecha),
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   );
                 },
                 valueListenable: band,
-                // The child parameter is most helpful if the child is
-                // expensive to build and does not depend on the value from
-                // the notifier.
               ),
               // fechita,
               space,

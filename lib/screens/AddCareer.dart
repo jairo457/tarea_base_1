@@ -45,18 +45,28 @@ class _AddCareerState extends State<AddCareer> {
         onPressed: () {
           if (widget.careerModel == null) {
             //verifica si es insercicion si no actualiza
-            masterDB!.INSERT_Career('tblCarrera', {
-              //El simbolo ! proteje contra  valores nulos
-              'NameCareer': TxtCareerName.text,
-            }).then((value) {
-              //Entero que regresamos de la llamada a insertar
-              var msj = (value > 0)
-                  ? 'La insercion fue exitosa!'
-                  : 'Ocurrio un error';
-              var snackbar = SnackBar(content: Text(msj));
-              ScaffoldMessenger.of(context).showSnackBar(snackbar); //aviso
-              Navigator.pop(context);
-            });
+            if (TxtCareerName.text == '') {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return const AlertDialog(
+                      content: Text('Ingrese un hombre valido'),
+                    );
+                  });
+            } else {
+              masterDB!.INSERT_Career('tblCarrera', {
+                //El simbolo ! proteje contra  valores nulos
+                'NameCareer': TxtCareerName.text,
+              }).then((value) {
+                //Entero que regresamos de la llamada a insertar
+                var msj = (value > 0)
+                    ? 'La insercion fue exitosa!'
+                    : 'Ocurrio un error';
+                var snackbar = SnackBar(content: Text(msj));
+                ScaffoldMessenger.of(context).showSnackBar(snackbar); //aviso
+                Navigator.pop(context);
+              });
+            }
           } else {
             masterDB!.UPDATE_Career('tblCarrera', {
               'IdCareer': widget.careerModel!.IdCareer,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tarea_base_1/routes.dart';
 import 'package:tarea_base_1/screens/LoginScreen.dart';
-import 'package:tarea_base_1/services/notifi_service.dart';
+import 'services/notifi_service.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
 void main() {

@@ -10,8 +10,6 @@ class ProfesorModel {
     this.IdProfesor,
     this.NameProfesor,
     this.NameSubject,
-    this.User,
-    this.Contra,
     this.IdCareer,
   });
   factory ProfesorModel.fromMap(Map<String, dynamic> map) {
@@ -19,8 +17,6 @@ class ProfesorModel {
       IdProfesor: map['IdProfesor'],
       NameSubject: map['NameSubject'],
       NameProfesor: map['NameProfesor'],
-      User: map['User'],
-      Contra: map['Contra'],
       IdCareer: map['IdCareer'],
     );
   }
